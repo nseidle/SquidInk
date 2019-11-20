@@ -19,18 +19,18 @@ Servo myservo;
 // modified 8 Nov 2013
 // by Scott Fitzgerald
 //****RELAYS*****
-int relay1=13;
-int relay2=2;
-int relay3=3;
-int relay4=4;
-int relay5=5;
-int relay6=6;
-int relay7=7;
-int relay8=8;
-int relay9=9;
-int relay0=10;
-int EnterA=11;
-int EnterB=12;
+int relay1 = 13;
+int relay2 = 2;
+int relay3 = 3;
+int relay4 = 4;
+int relay5 = 5;
+int relay6 = 6;
+int relay7 = 7;
+int relay8 = 8;
+int relay9 = 9;
+int relay0 = 10;
+int EnterA = 11;
+int EnterB = 12;
 
 
 //used in the menu, typesetting
@@ -64,10 +64,22 @@ void setup()
   pinMode(EnterA, OUTPUT);
   pinMode(EnterB, OUTPUT);
 
+  digitalWrite(relay1, HIGH);
+  digitalWrite(relay2, HIGH);
+  digitalWrite(relay3, HIGH);
+  digitalWrite(relay4, HIGH);
+  digitalWrite(relay5, HIGH);
+  digitalWrite(relay6, HIGH);
+  digitalWrite(relay7, HIGH);
+  digitalWrite(relay8, HIGH);
+  digitalWrite(relay9, HIGH);
+  digitalWrite(relay0, HIGH);
+  digitalWrite(EnterA, HIGH);
+  
 
   myservo.attach(servoPin);
   Serial.begin(9600);
- 
+
   printMenu();
 
 
@@ -208,9 +220,9 @@ void manualEnter()
       unsigned secondVal = (n / 10U) % 10;
       unsigned thirdVal = (n / 1U) % 10;
 
-//      Serial.println(firstVal);
-//      Serial.println(secondVal);
-//      Serial.println(thirdVal);
+      //      Serial.println(firstVal);
+      //      Serial.println(secondVal);
+      //      Serial.println(thirdVal);
 
       //press the numbers entered
       pressNumber(firstVal);
@@ -378,95 +390,91 @@ void stopSequence()
 }
 
 
+
 //TODO
 //COMPLETE ONCE RELAY SWITCHES ARE ARRANGED
 void pressOne()
 {
-  digitalWrite(relay1,HIGH);
+  digitalWrite(relay1, LOW);
   delay(500);
-  digitalWrite(relay1,LOW);
+  digitalWrite(relay1, HIGH);
 
 
 
 }
 void pressTwo()
 {
-  digitalWrite(relay2,HIGH);
+  digitalWrite(relay2, LOW);
   delay(500);
-  digitalWrite(relay2,LOW);
+  digitalWrite(relay2, HIGH);
 
 
 }
 void pressThree()
 {
-  digitalWrite(relay3,HIGH);
+  digitalWrite(relay3, LOW);
   delay(500);
-  digitalWrite(relay3,LOW);
+  digitalWrite(relay3, HIGH);
 
 
 }
 void pressFour()
-{ 
-  digitalWrite(relay4,HIGH);
+{
+  digitalWrite(relay4, LOW);
   delay(500);
-  digitalWrite(relay4,LOW);
+  digitalWrite(relay4, HIGH);
 
 
 
 }
 void pressFive()
 {
-  digitalWrite(relay5,HIGH);
+  digitalWrite(relay5, LOW);
   delay(500);
-  digitalWrite(relay5,LOW);
-
+  digitalWrite(relay5, HIGH);
 
 }
 void pressSix()
 {
-  digitalWrite(relay6,HIGH);
+ digitalWrite(relay6, LOW);
   delay(500);
-  digitalWrite(relay6,LOW);
-
+  digitalWrite(relay6, HIGH);
 
 }
 void pressSeven()
 {
-  digitalWrite(relay7,HIGH);
+  digitalWrite(relay7, LOW);
   delay(500);
-  digitalWrite(relay7,LOW);
-
+  digitalWrite(relay7, HIGH);
 }
 void pressEight()
 {
-  digitalWrite(relay8,HIGH);
+  digitalWrite(relay8, LOW);
   delay(500);
-  digitalWrite(relay8,LOW);
-
+  digitalWrite(relay8, HIGH);
 
 
 }
 void pressNine()
 {
-  digitalWrite(relay9,HIGH);
+  digitalWrite(relay9, LOW);
   delay(500);
-  digitalWrite(relay9,LOW);
-
+  digitalWrite(relay9, HIGH);
 
 
 }
 void pressZero()
 {
-  digitalWrite(relay0,HIGH);
+  digitalWrite(relay0, LOW);
   delay(500);
-  digitalWrite(relay0,LOW);
+  digitalWrite(relay0, HIGH);
 
 }
 
 void pressEnter()
 {
-  digitalWrite(EnterA,HIGH);
+  digitalWrite(EnterA, LOW);
   delay(500);
-  digitalWrite(EnterA,LOW);
+  digitalWrite(EnterA, HIGH);
 
 }
