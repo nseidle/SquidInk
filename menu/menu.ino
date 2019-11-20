@@ -18,6 +18,20 @@ Servo myservo;
 //https://www.arduino.cc/en/Tutorial/Sweep
 // modified 8 Nov 2013
 // by Scott Fitzgerald
+//****RELAYS*****
+int relay1=13;
+int relay2=2;
+int relay3=3;
+int relay4=4;
+int relay5=5;
+int relay6=6;
+int relay7=7;
+int relay8=8;
+int relay9=9;
+int relay0=10;
+int EnterA=11;
+int EnterB=12;
+
 
 //used in the menu, typesetting
 float reading = 0;
@@ -37,6 +51,19 @@ int servoPin = 9;
 
 void setup()
 {
+  pinMode(relay1, OUTPUT);
+  pinMode(relay2, OUTPUT);
+  pinMode(relay3, OUTPUT);
+  pinMode(relay4, OUTPUT);
+  pinMode(relay5, OUTPUT);
+  pinMode(relay6, OUTPUT);
+  pinMode(relay7, OUTPUT);
+  pinMode(relay8, OUTPUT);
+  pinMode(relay9, OUTPUT);
+  pinMode(relay0, OUTPUT);
+  pinMode(EnterA, OUTPUT);
+  pinMode(EnterB, OUTPUT);
+
 
   myservo.attach(servoPin);
   Serial.begin(9600);
@@ -60,7 +87,7 @@ void loop() {
 
     }
 
-    Serial.println(reading);
+    //Serial.println(reading);
     if (reading == '1')
     {
 
@@ -209,6 +236,7 @@ void manualEnter()
 }
 
 void loopSequence()
+{
   Serial.println("Sequence of all possible combos is about to begin");
   bool found = 0;
   if (codeLength != 0)
@@ -354,56 +382,91 @@ void stopSequence()
 //COMPLETE ONCE RELAY SWITCHES ARE ARRANGED
 void pressOne()
 {
+  digitalWrite(relay1,HIGH);
+  delay(500);
+  digitalWrite(relay1,LOW);
+
 
 
 }
 void pressTwo()
 {
+  digitalWrite(relay2,HIGH);
+  delay(500);
+  digitalWrite(relay2,LOW);
 
 
 }
 void pressThree()
 {
+  digitalWrite(relay3,HIGH);
+  delay(500);
+  digitalWrite(relay3,LOW);
 
 
 }
 void pressFour()
-{
+{ 
+  digitalWrite(relay4,HIGH);
+  delay(500);
+  digitalWrite(relay4,LOW);
+
 
 
 }
 void pressFive()
 {
+  digitalWrite(relay5,HIGH);
+  delay(500);
+  digitalWrite(relay5,LOW);
 
 
 }
 void pressSix()
 {
+  digitalWrite(relay6,HIGH);
+  delay(500);
+  digitalWrite(relay6,LOW);
 
 
 }
 void pressSeven()
 {
-
+  digitalWrite(relay7,HIGH);
+  delay(500);
+  digitalWrite(relay7,LOW);
 
 }
 void pressEight()
 {
+  digitalWrite(relay8,HIGH);
+  delay(500);
+  digitalWrite(relay8,LOW);
+
 
 
 }
 void pressNine()
 {
+  digitalWrite(relay9,HIGH);
+  delay(500);
+  digitalWrite(relay9,LOW);
+
 
 
 }
 void pressZero()
 {
-
+  digitalWrite(relay0,HIGH);
+  delay(500);
+  digitalWrite(relay0,LOW);
 
 }
+
 void pressEnter()
 {
-
+  digitalWrite(EnterA,HIGH);
+  delay(500);
+  digitalWrite(EnterA,LOW);
 
 }
