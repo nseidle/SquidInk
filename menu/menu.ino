@@ -42,14 +42,14 @@ float testedComboArray[100];
 //keep track of which value in the array is free :)
 int increment = 0;
 //entered code, set with returned value. If it's -1, something's wrong
-int codeLength = -1;
+int codeLength = 0;
 //used in loopSequence function
 int comboArray[3] = {0, 0, 0};
 
 //*****SERVO MOTOR********
 //position of motor
 int pos = 0;
-int servoPin = 9;
+int servoPin = 12;
 
 void setup()
 {
