@@ -1,6 +1,6 @@
 
 //created by Lili Cushing-Quevli
-//modified: November 19th, 2019
+//modified: December 1st, 2019
 
 //IN PROGRESS
 // 1) Match with relay switches
@@ -31,6 +31,8 @@ int relay9 = 9;
 int relay0 = 10;
 int EnterA = 11;
 int EnterB = 12;
+
+int delayTime=500;
 
 
 //used in the menu, typesetting
@@ -391,12 +393,11 @@ void stopSequence()
 
 
 
-//TODO
-//COMPLETE ONCE RELAY SWITCHES ARE ARRANGED
+//************RELAY PRESS*******************
 void pressOne()
 {
   digitalWrite(relay1, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay1, HIGH);
 
 
@@ -405,7 +406,7 @@ void pressOne()
 void pressTwo()
 {
   digitalWrite(relay2, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay2, HIGH);
 
 
@@ -413,7 +414,7 @@ void pressTwo()
 void pressThree()
 {
   digitalWrite(relay3, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay3, HIGH);
 
 
@@ -421,7 +422,7 @@ void pressThree()
 void pressFour()
 {
   digitalWrite(relay4, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay4, HIGH);
 
 
@@ -430,21 +431,21 @@ void pressFour()
 void pressFive()
 {
   digitalWrite(relay5, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay5, HIGH);
 
 }
 void pressSix()
 {
  digitalWrite(relay6, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay6, HIGH);
 
 }
 void pressSeven()
 {
   digitalWrite(relay7, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay7, HIGH);
 }
 void pressEight()
@@ -458,7 +459,7 @@ void pressEight()
 void pressNine()
 {
   digitalWrite(relay9, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay9, HIGH);
 
 
@@ -466,7 +467,7 @@ void pressNine()
 void pressZero()
 {
   digitalWrite(relay0, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(relay0, HIGH);
 
 }
@@ -474,7 +475,7 @@ void pressZero()
 void pressEnter()
 {
   digitalWrite(EnterA, LOW);
-  delay(500);
+  delay(delayTime);
   digitalWrite(EnterA, HIGH);
 
 }
