@@ -30,8 +30,8 @@ int relay8 = 8;
 int relay9 = 9;
 int relay0 = 10;
 int EnterA = 11;
-int EnterB = 12;
 
+int readResistor;
 
 //*******LEDS**************
 int LED1 = A5;
@@ -42,7 +42,7 @@ int LED5 = A1;
 
 int photoResistor = A0;
 
-int delayTime = 200;
+int delayTime = 114;
 
 //can go up to 3 codes before needing delay sequence called.
 int timeOut = 1;
@@ -76,7 +76,7 @@ void setup()
   pinMode(relay9, OUTPUT);
   pinMode(relay0, OUTPUT);
   pinMode(EnterA, OUTPUT);
-  pinMode(EnterB, OUTPUT);
+
 
   digitalWrite(relay1, HIGH);
   digitalWrite(relay2, HIGH);
@@ -101,6 +101,7 @@ void setup()
 
 void loop() {
 
+  readResistor = analogRead(photoResistor);
   while (Serial.available() > 0)
   {
 
@@ -133,6 +134,13 @@ void loop() {
 
     }
 
+    else if (reading == '4')
+    {
+      resetCombo();
+
+
+    }
+
     else
     {
       //error catching
@@ -154,6 +162,7 @@ void printMenu()
   Serial.println("1. Enter how long the combination is");
   Serial.println("2. Manually enter a code");
   Serial.println("3. Start loop sequence");
+  Serial.println("4. Set Code Manually");
 
 
 }
@@ -238,15 +247,18 @@ void manualEnter()
       Serial.println(secondVal);
       Serial.println(thirdVal);
 
+
       //press the numbers entered
       pressNumber(firstVal);
       pressNumber(secondVal);
       pressNumber(thirdVal);
       pressEnter();
+      //Serial.println("Checking Winstate: ");
+      bool testWin = winState();
 
 
 
-      if (winState)
+      if (testWin == true)
       {
         Serial.print("Congratulations, you've entered the right combo. Your Combo is: ");
         Serial.print(firstVal);
@@ -256,17 +268,8 @@ void manualEnter()
         Serial.println(thirdVal);
 
       }
-      //add it to the already tested combinations
-      testedComboArray[increment] = testCombo;
 
-      //increment global variable
-      increment++;
       return;
-
-
-
-
-
 
 
     }
@@ -284,66 +287,70 @@ void loopSequence()
   Serial.println("Sequence of all possible combos is about to begin");
   Serial.println("Press 'f' at any time to stop sequence");
   Serial.println("Combo array is:");
-//  for(int y=0;y<3;y++)
-//  {
-//    comboArray[y]=0;
-//    Serial.print(comboArray[y]+",");
-//    
-//   }
-//  return;
+
   bool found = 0;
   if (codeLength != 0)
   {
     while (found == 0)
     {
-//      if (reading == 'f')
-//      {
-//        Serial.println("You have exited the combos sequence, please press another option on the menu to proceed");
-//        return;
-//      }
+      if (reading == 'f')
+      {
+        Serial.println("You have exited the combos sequence, please press another option on the menu to proceed");
+        return;
+      }
       //by default, array is set to have all zeros
       //start with 0,0,0 and then increment the last value, going until the last value hits the tenth value
       //increment the second value and start the for loop again
       for (int i = 0; i < 10; i++)
       {
         //call switch case menu to execute the pressing of the buttons
-        
-        pressNumber(comboArray[0]);
-        
-        
-        pressNumber(comboArray[1]);
-       
-        
-        pressNumber(i);
-        
-        pressEnter();
 
-        if(comboArray[0]==1&&comboArray[1]==0&&i==0)
+        pressNumber(comboArray[0]);
+
+
+
+        pressNumber(comboArray[1]);
+
+
+        pressNumber(i);
+
+
+        pressEnter();
+        delay(1000);
+        if (comboArray[0] == 1 && comboArray[1] == 0 && i == 0)
         {
           Serial.print("100 has been REACHED!!!!!");
-         }
-        
+        }
+
         timeOut++;
 
-//        if (winState)
-//        {
-//
-//          Serial.println("Congratulations, The correct combo has been found! Your Combo is: ");
-//          Serial.print(comboArray[0]);
-//          Serial.print(", ");
-//          Serial.print(comboArray[1]);
-//          Serial.print(", ");
-//          Serial.print(i);
-//          turnHandle();
-//          Serial.println("Exiting function....");
-//          return;
-//        }
+        if (winState())
+        {
 
-//        if (timeOut > 3)
-//        {
-//          stopSequence();
-//        }
-        
+          Serial.println("Congratulations, The correct combo has been found! Your Combo is: ");
+          Serial.print(comboArray[0]);
+          Serial.print(", ");
+          Serial.print(comboArray[1]);
+          Serial.print(", ");
+          Serial.print(i);
+          turnHandle();
+          Serial.println("Exiting function....");
+          return;
+        }
+
+
+
+        if (timeOut == 3)
+        {
+          delay(30000);
+        }
+
+        else
+        {
+          stopSequence();
+
+        }
+
       }
       //if the second combo does not have the value nine in it
       if (comboArray[1] < 9)
@@ -352,7 +359,7 @@ void loopSequence()
         //Example : instead of 0,0,0
         // it is now 0,1,[i]
         comboArray[1] += 1;
-        
+
 
       }
 
@@ -367,13 +374,13 @@ void loopSequence()
           comboArray[1] = 0;
         }
 
-//        else
-//        {
-//          //all other codes have been exhausted, if the code has not been found, exit the while loop
-//          found = 1;
-//
-//
-//        }
+        //        else
+        //        {
+        //          //all other codes have been exhausted, if the code has not been found, exit the while loop
+        //          found = 1;
+        //
+        //
+        //        }
 
 
       }
@@ -388,6 +395,64 @@ void loopSequence()
     return;
   }
 
+
+
+}
+
+void resetCombo()
+{
+  delay(10);
+  while (Serial.available() > 0)
+  {
+
+    //if there's something to read, take that number
+    //save it in a value/ array
+    //for now has an array of a large size, but could consider adding vector library, at the cost of memory
+    //eeprom?
+    //wait for carriage return
+
+    while (Serial.available() > 0) {
+
+      Serial.read();
+      //clears out the buffer
+
+    }
+
+    Serial.println("Setting the Combo: Please enter your 3 digit Code you would like to set.");
+    while (Serial.available() == 0) {
+
+      //Do nothing
+    }
+    while (Serial.available() > 0)
+    {
+
+      //if there's something to read, take that number
+      //make it the length
+
+      int testCombo = Serial.parseInt();
+      Serial.print("The combo you've entered is: ");
+      Serial.println(testCombo);
+
+      //code citation
+      //by Christop
+      //source link: https://forum.arduino.cc/index.php?topic=307479.0
+      //parses the full code entered and separates it into individual numbers
+      unsigned n = testCombo;
+      unsigned firstVal = (n / 100U) % 10;
+      unsigned secondVal = (n / 10U) % 10;
+      unsigned thirdVal = (n / 1U) % 10;
+
+      pressNumber(firstVal);
+      pressNumber(secondVal);
+      pressNumber(thirdVal);
+      pressEnter();
+
+
+
+      return;
+
+    }
+  }
 
 
 }
@@ -448,40 +513,51 @@ void pressNumber( int var)
 
 bool winState()
 {
-  if (analogRead(photoResistor) > 70)
+  int counter = 0;
+  //credit to Nathan Seidle for this code.
+  //Wait for 1 second while the LED flashes (or doesn't)
+  while (1)
+  {
+    counter++;
+    if (counter > 1000)
+    {
+      return false;
+    }
+    delay(1);
+    int temp = analogRead(photoResistor);
+    //Serial.println(temp);
+    if (temp > 100)
+    {
+      //Serial.println("GREEN");
+
+      break;
+
+    }
+
+  }
+
+
+
+  Serial.println("CODE FOUND!!!!!!");
+
+  while (1) 
   {
     digitalWrite(LED1, HIGH);
-    delay(10);
+    delay(500);
     digitalWrite(LED2, HIGH);
-    delay(10);
+    delay(500);
     digitalWrite(LED3, HIGH);
-    delay(10);
+    delay(500);
     digitalWrite(LED4, HIGH);
-    delay(10);
+    delay(500);
     digitalWrite(LED5, HIGH);
-
-    digitalWrite(LED1, LOW);
-    digitalWrite(LED2, LOW);
-    digitalWrite(LED3, LOW);
-    digitalWrite(LED4, LOW);
-    digitalWrite(LED5, LOW);
-
-    digitalWrite(LED1, HIGH);
-    digitalWrite(LED2, HIGH);
-    digitalWrite(LED3, HIGH);
-    digitalWrite(LED4, HIGH);
-    digitalWrite(LED5, HIGH);
-
-    return true;
 
 
   }
 
-  else
-  {
-    return false;
 
-  }
+
+  return true;
 
 
 
@@ -592,7 +668,7 @@ void pressNine()
 }
 void pressZero()
 {
-  
+
   digitalWrite(relay0, LOW);
   delay(delayTime);
   digitalWrite(relay0, HIGH);
@@ -605,5 +681,7 @@ void pressEnter()
   digitalWrite(EnterA, LOW);
   delay(delayTime);
   digitalWrite(EnterA, HIGH);
+  delay(delayTime);
+
 
 }
