@@ -1,6 +1,6 @@
 
 //created by Lili Cushing-Quevli
-//modified: December 1st, 2019
+//modified: December 5th, 2019
 
 //IN PROGRESS
 // 1) Match with relay switches
@@ -11,7 +11,9 @@
 
 
 #include <Servo.h>
+#include <EEPROM.h>
 Servo myservo;
+
 //citation for Servo library and code:
 //by BARRAGAN <http://barraganstudio.com>
 //This example code is in the public domain.
@@ -30,7 +32,7 @@ int relay8 = 8;
 int relay9 = 9;
 int relay0 = 10;
 int EnterA = 11;
-
+bool resumeLastKnown = 0;
 int readResistor;
 
 //*******LEDS**************
@@ -39,6 +41,11 @@ int LED2 = A4;
 int LED3 = A3;
 int LED4 = A2;
 int LED5 = A1;
+
+
+//**********EEPROM***********
+int addr = 0;
+
 
 int photoResistor = A0;
 
@@ -140,6 +147,8 @@ void loop() {
 
 
     }
+
+
 
     else
     {
@@ -293,11 +302,11 @@ void loopSequence()
   {
     while (found == 0)
     {
-      if (reading == 'f')
-      {
-        Serial.println("You have exited the combos sequence, please press another option on the menu to proceed");
-        return;
-      }
+      //      if (reading == 'f')
+      //      {
+      //        Serial.println("You have exited the combos sequence, please press another option on the menu to proceed");
+      //        return;
+      //      }
       //by default, array is set to have all zeros
       //start with 0,0,0 and then increment the last value, going until the last value hits the tenth value
       //increment the second value and start the for loop again
@@ -305,6 +314,22 @@ void loopSequence()
       {
         //call switch case menu to execute the pressing of the buttons
 
+        if (EEPROM.read(addr + 7) == 1)
+        {
+          Serial.println("1) There was something previously stored here....");
+          for (int i = 0; i < 3; i++)
+          {
+            int x;
+            x = (int) EEPROM.read(addr);
+            byte testVal=EEPROM.read(addr);
+            Serial.print(testVal,DEC);
+            addr += 2;
+            comboArray[i] = x;
+
+          }
+          Serial.println('\n');
+
+        }
         pressNumber(comboArray[0]);
 
 
@@ -313,16 +338,29 @@ void loopSequence()
 
 
         pressNumber(i);
-
+        comboArray[2] = i;
 
         pressEnter();
-        delay(1000);
+
+        addr = 0;
+        for (int i = 0; i < 3; i++)
+        {
+          EEPROM.write(addr, comboArray[i]);
+          //an int is 2 bytes, therefore, we jump forward 2 bytes to write the next value
+          addr += 2;
+
+        }
+        addr += 1;
+        EEPROM.write(addr, 1);
+
+
+        //        delay(500);
         if (comboArray[0] == 1 && comboArray[1] == 0 && i == 0)
         {
           Serial.print("100 has been REACHED!!!!!");
         }
 
-        timeOut++;
+
 
         if (winState())
         {
@@ -340,16 +378,12 @@ void loopSequence()
 
 
 
-        if (timeOut == 3)
-        {
-          delay(30000);
-        }
-
-        else
+        if (timeOut % 3 == 0)
         {
           stopSequence();
-
         }
+        timeOut++;
+
 
       }
       //if the second combo does not have the value nine in it
@@ -538,22 +572,21 @@ bool winState()
 
 
 
-  Serial.println("CODE FOUND!!!!!!");
-
-  while (1) 
-  {
-    digitalWrite(LED1, HIGH);
-    delay(500);
-    digitalWrite(LED2, HIGH);
-    delay(500);
-    digitalWrite(LED3, HIGH);
-    delay(500);
-    digitalWrite(LED4, HIGH);
-    delay(500);
-    digitalWrite(LED5, HIGH);
+  //Serial.println("CODE FOUND!!!!!!");
 
 
-  }
+  digitalWrite(LED1, HIGH);
+  delay(500);
+  digitalWrite(LED2, HIGH);
+  delay(500);
+  digitalWrite(LED3, HIGH);
+  delay(500);
+  digitalWrite(LED4, HIGH);
+  delay(500);
+  digitalWrite(LED5, HIGH);
+
+
+
 
 
 
@@ -581,8 +614,8 @@ void turnHandle()
 
 void stopSequence()
 {
-  //delay for a four minutes and 30 seconds while the pcb times out
-  delay(270000);
+  //delay for a four minutes and 46 seconds while the pcb times out
+  delay(286500);
 
 }
 
@@ -681,7 +714,7 @@ void pressEnter()
   digitalWrite(EnterA, LOW);
   delay(delayTime);
   digitalWrite(EnterA, HIGH);
-  delay(delayTime);
+  delay(70);
 
 
 }
