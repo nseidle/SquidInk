@@ -414,14 +414,12 @@ void startCombo()
       
       Serial.println("Setting the code....");
       int counting=0;
-        byte placeVal = firstVal;
-        byte placeVal2 = secondVal;
-        byte placeVal3 = thirdVal;
-        EEPROM.write(counting,placeVal );
-        counting++;
-        EEPROM.write(counting,placeVal2);
-        counting++;
-        EEPROM.write(counting,placeVal3);
+       
+        EEPROM.write(counting,firstVal );
+        counting+=2;
+        EEPROM.write(counting,secondVal);
+        counting+=2;
+        EEPROM.write(counting,thirdVal);
         
       EEPROM.write(7, 1);
       return;
