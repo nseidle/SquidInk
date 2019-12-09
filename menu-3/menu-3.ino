@@ -284,12 +284,14 @@ void loopSequence()
     for (int i = 0; i < 10; i++)
     {
       //call switch case menu to execute the pressing of the buttons
-
+      int addrTest=0;
       for (int j = 0; j < 3; j++)
       {
 
         Serial.println("There was something previously stored here...");
-        byte comboVal = EEPROM.read(0 + j);
+        byte comboVal = EEPROM.read(addrTest);
+        addrTest+=2;
+        
         Serial.print(comboVal, DEC);
 
         comboArray[j] = comboVal;
