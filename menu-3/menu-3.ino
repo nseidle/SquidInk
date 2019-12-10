@@ -57,7 +57,7 @@ int increment = 0;
 int codeLength = 0;
 //used in loopSequence function
 int comboArray[3] = {0, 0, 0};
-int winCodeArray[3]={0,0,0};
+int winCodeArray[3] = {0, 0, 0};
 
 //*****SERVO MOTOR********
 //position of motor
@@ -149,6 +149,13 @@ void loop() {
 
     }
 
+    else if (reading == '5')
+    {
+
+      retrieveWinCode();
+
+    }
+
 
     else
     {
@@ -172,7 +179,7 @@ void printMenu()
   Serial.println("2. Manually enter a code");
   Serial.println("3. Start loop sequence");
   Serial.println("4. Set Code Manually");
-  Serial.println("5. Randomize Code");
+  Serial.println("5. Retrieve Win Code :)");
 
 
 }
@@ -323,15 +330,24 @@ void loopSequence()
 
       if (winState())
       {
+        int tracker = 8;
 
-        Serial.println("Congratulations, The correct combo has been found! Your Combo is: ");
-        Serial.print(comboArray[0]);
-        Serial.print(", ");
-        Serial.print(comboArray[1]);
-        Serial.print(", ");
-        Serial.print(i);
-        //turnHandle();
-        Serial.println("Exiting function....");
+        //save in the secondary values of EEPROM, get in other function
+        EEPROM.write(tracker, comboArray[0]);
+        tracker += 2;
+        EEPROM.write(tracker, comboArray[1]);
+        tracker += 2;
+        EEPROM.write(tracker, i);
+
+
+        //        Serial.println("Congratulations, The correct combo has been found! Your Combo is: ");
+        //        Serial.print(comboArray[0]);
+        //        Serial.print(", ");
+        //        Serial.print(comboArray[1]);
+        //        Serial.print(", ");
+        //        Serial.print(i);
+        //        //turnHandle();
+        //        Serial.println("Exiting function....");
         return;
       }
 
@@ -345,6 +361,8 @@ void loopSequence()
 
 
     }
+
+    comboArray[2]=0;
     //if the second combo does not have the value nine in it
     if (comboArray[1] < 9)
     {
@@ -430,7 +448,7 @@ void startCombo()
       EEPROM.write(counting, thirdVal);
 
       EEPROM.write(7, 1);
-      
+
       return;
     }
   }
@@ -441,8 +459,28 @@ void startCombo()
 
 void retrieveWinCode()
 {
+  int tracker = 8;
 
-  
+  int saver = 0;
+  saver = EEPROM.read(tracker);
+  winCodeArray[0] = saver;
+  tracker += 2;
+
+  saver = EEPROM.read(tracker);
+  winCodeArray[1] = saver;
+  tracker += 2;
+
+  saver = EEPROM.read(tracker);
+  winCodeArray[2] = saver;
+
+  Serial.print("YOUR WNNING CODE WAS: ");
+  for (int i = 0; i < 3; i++)
+  {
+    Serial.print(winCodeArray[i] + ", ");
+
+  }
+  Serial.print("\n");
+
 
 
 }
