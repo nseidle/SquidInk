@@ -57,7 +57,7 @@ int increment = 0;
 int codeLength = 0;
 //used in loopSequence function
 int comboArray[3] = {0, 0, 0};
-int randComboArray[3] = {0, 0, 0};
+int winCodeArray[3]={0,0,0};
 
 //*****SERVO MOTOR********
 //position of motor
@@ -125,6 +125,7 @@ void loop() {
 
     if (reading == '1')
     {
+      startCombo();
 
 
     }
@@ -271,39 +272,44 @@ void loopSequence()
   bool found = 0;
 
 
+  int addrTest = 0;
+  int comboVal;
+  if (EEPROM.read(7) == 1)
+  {
+    Serial.println("There was something previously stored here...");
+    for (int j = 0; j < 3; j++)
+    {
+      comboVal = EEPROM.read(addrTest);
+      addrTest += 2;
+
+      Serial.print(comboVal, DEC);
+
+
+      comboArray[j] = comboVal;
+
+    }
+  }
+
   while (found == 0)
   {
-    //      if (reading == 'f')
-    //      {
-    //        Serial.println("You have exited the combos sequence, please press another option on the menu to proceed");
-    //        return;
-    //      }
+
     //by default, array is set to have all zeros
     //start with 0,0,0 and then increment the last value, going until the last value hits the tenth value
     //increment the second value and start the for loop again
-    for (int i = 0; i < 10; i++)
+
+
+
+    for (int i = comboArray[2]; i < 10; i++)
     {
       //call switch case menu to execute the pressing of the buttons
-      int addrTest=0;
-      for (int j = 0; j < 3; j++)
-      {
 
-        Serial.println("There was something previously stored here...");
-        byte comboVal = EEPROM.read(addrTest);
-        addrTest+=2;
-        
-        Serial.print(comboVal, DEC);
 
-        comboArray[j] = comboVal;
-
-      }
       pressNumber(comboArray[0]);
 
       pressNumber(comboArray[1]);
 
-      i = comboArray[2];
       pressNumber(i);
-      comboArray[2] = i;
+
 
 
       pressEnter();
@@ -311,7 +317,7 @@ void loopSequence()
       Serial.print(",");
       Serial.print(comboArray[1]);
       Serial.print(",");
-      Serial.println(comboArray[2]);
+      Serial.println(i);
 
 
 
@@ -413,21 +419,30 @@ void startCombo()
       unsigned firstVal = (n / 100U) % 10;
       unsigned secondVal = (n / 10U) % 10;
       unsigned thirdVal = (n / 1U) % 10;
-      
+
       Serial.println("Setting the code....");
-      int counting=0;
-       
-        EEPROM.write(counting,firstVal );
-        counting+=2;
-        EEPROM.write(counting,secondVal);
-        counting+=2;
-        EEPROM.write(counting,thirdVal);
-        
+      int counting = 0;
+
+      EEPROM.write(counting, firstVal );
+      counting += 2;
+      EEPROM.write(counting, secondVal);
+      counting += 2;
+      EEPROM.write(counting, thirdVal);
+
       EEPROM.write(7, 1);
+      
       return;
     }
   }
 
+
+
+}
+
+void retrieveWinCode()
+{
+
+  
 
 
 }
