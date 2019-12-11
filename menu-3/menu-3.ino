@@ -326,6 +326,17 @@ void loopSequence()
       Serial.print(",");
       Serial.println(i);
 
+      addrTest=0;
+
+      for (int j = 0; j < 3; j++)
+    {
+      int writeCombo=0;
+      comboArray[j] = writeCombo;
+      EEPROM.write(addrTest, writeCombo);
+      addrTest += 2;
+
+    }
+
 
 
       if (winState())
