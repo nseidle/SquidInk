@@ -2,14 +2,11 @@
 //created by Lili Cushing-Quevli
 //modified: December 11th, 2019
 
-//IN PROGRESS
-// 1) Match with relay switches
-// 2) Make the PCB board
-// 3) Make functions to press each button for easy calling in loop sequence function
-// 4) Edit button pushing code to work with larger than length 3 (optional)
-// 5) TEST THIS CODE TO MAKE SURE IT FUNCTIONS AS PLANNED
-
-//this is testing
+//DESIGNED TO WORK WITH A 3 DIGIT CODE
+//simulate pressing of buttons with a switch menu
+//take user input and then properly press keys
+//store winning value in EEPROM if using loop sequence function (can be unplugged from computer at this point)
+//otherwise prints to serial monitor when winning code is found
 
 #include <EEPROM.h>
 
@@ -25,7 +22,7 @@ int relay8 = 8;
 int relay9 = 9;
 int relay0 = 10;
 int EnterA = 11;
-bool resumeLastKnown = 0;
+
 int readResistor;
 
 //*******LEDS**************
@@ -36,8 +33,6 @@ int LED4 = A2;
 int LED5 = A1;
 
 
-//**********EEPROM***********
-int addr = 0;
 
 
 int photoResistor = A0;
@@ -62,11 +57,13 @@ int winCodeArray[3] = {0, 0, 0};
 
 //*****SERVO MOTOR********
 //position of motor
+//optional, currently commented out. For usage with the 3D printed handle cover and a servo motor (included in GH repo)
 int pos = 0;
 int servoPin = 12;
 
 void setup()
 {
+
   pinMode(relay1, OUTPUT);
   pinMode(relay2, OUTPUT);
   pinMode(relay3, OUTPUT);
@@ -79,7 +76,7 @@ void setup()
   pinMode(relay0, OUTPUT);
   pinMode(EnterA, OUTPUT);
 
-
+  //all relay switches are set to HIGH to be set LOW later when a button needs pressed
   digitalWrite(relay1, HIGH);
   digitalWrite(relay2, HIGH);
   digitalWrite(relay3, HIGH);
@@ -102,6 +99,7 @@ void setup()
 
   Serial.begin(9600);
 
+  //menu only prints once
   printMenu();
 
 
@@ -109,7 +107,7 @@ void setup()
 
 void loop() {
 
-
+  //credit to Nathan Seidle for help with the code + lecture on serial.available
   while (Serial.available() > 0)
   {
 
@@ -123,9 +121,10 @@ void loop() {
     }
 
     //Serial.println(reading);
-
+    //Didn't want to do ACII, so we do char reading instead
     if (reading == '1')
     {
+      //sets EEMPROM code starting point
       startCombo();
 
 
@@ -133,18 +132,21 @@ void loop() {
 
     else if (reading == '2')
     {
+      //takes input from serial monitor and enters in correct buttons
       manualEnter();
 
     }
 
     else if (reading == '3')
     {
+      //starts from EEPROM value, then increments in order, by going up one digit at a time
       loopSequence();
 
     }
 
     else if (reading == '4')
     {
+      //set the combo
       startCombo();
 
 
@@ -152,7 +154,7 @@ void loop() {
 
     else if (reading == '5')
     {
-
+      //retrieve stored EEPROM win value once winState is triggered
       retrieveWinCode();
 
     }
@@ -160,9 +162,7 @@ void loop() {
 
     else
     {
-      //error catching
-      //      Serial.print("Oops! You entered somthing that is not in this menu.  ");
-      //      Serial.println("Please try again");
+      //don't do anything
 
     }
 
@@ -186,9 +186,6 @@ void printMenu()
 }
 
 
-
-//TO DO: Modify so that the entered code is saved and skips over it
-//when going through the sequence, print to serial monitor
 void manualEnter()
 {
   delay(10);
@@ -198,7 +195,6 @@ void manualEnter()
     //if there's something to read, take that number
     //save it in a value/ array
     //for now has an array of a large size, but could consider adding vector library, at the cost of memory
-    //eeprom?
     //wait for carriage return
 
     while (Serial.available() > 0) {
@@ -274,7 +270,6 @@ void manualEnter()
 void loopSequence()
 {
   Serial.println("Sequence of all possible combos is about to begin");
-  Serial.println("Press 'f' at any time to stop sequence");
   Serial.println("Combo array is:");
 
   bool found = 0;
@@ -282,6 +277,9 @@ void loopSequence()
 
   int addrTest = 0;
   int comboVal;
+
+  //the 7th value is a boolean to determine if it was ever run (w/o a board reset) that way, we can fill in 
+  //the values, if they exist
   if (EEPROM.read(7) == 1)
   {
     Serial.println("There was something previously stored here...");
@@ -353,6 +351,7 @@ void loopSequence()
         int tracker = 8;
 
         //save in the secondary values of EEPROM, get in other function
+        //int is 2 bytes, increment accordingly
         EEPROM.write(tracker, comboArray[0]);
         tracker += 2;
         EEPROM.write(tracker, comboArray[1]);
@@ -373,7 +372,7 @@ void loopSequence()
       }
 
 
-
+      //every 3 combos, it requires a time out of 4 minutes and 46 seconds
       if (timeOut % 3 == 0)
       {
         stopSequence();
@@ -383,7 +382,9 @@ void loopSequence()
 
     }
 
+    //since the comboArray[2] was initially set with the EEPROM value, we now need to set it back to 0 when it starts the for loop again
     comboArray[2] = 0;
+
     //if the second combo does not have the value nine in it
     if (comboArray[1] < 9)
     {
@@ -394,6 +395,8 @@ void loopSequence()
 
 
     }
+    //on the 8th time, it will increment to 9 and then go through the for loop one last time with 9, then when it comes back
+    //it is no longer less than 9, and will go to the next statement
 
     else
     {
@@ -485,30 +488,28 @@ void retrieveWinCode()
 
   int tracker = 8;
   int saver = 0;
-  
+
+  //get the EEPROM secondary values and then store in local array
+
   Serial.print("The Safes code is: ");
   saver = EEPROM.read(tracker);
-//  Serial.println(saver);
-//  Serial.print(saver);
-
   winCodeArray[0] = saver;
-  
-  
+
+
   tracker += 2;
 
   saver = EEPROM.read(tracker);
-//  Serial.print(saver);
   winCodeArray[1] = saver;
   tracker += 2;
 
   saver = EEPROM.read(tracker);
-//  Serial.print(saver);
   winCodeArray[2] = saver;
 
   Serial.print("YOUR WNNING CODE WAS: ");
+  //print the array stored in EEPROM
   for (int i = 0; i < 3; i++)
   {
-   
+
     Serial.print(winCodeArray[i]);
 
   }
@@ -577,7 +578,7 @@ void resetCombo()
 }
 
 
-//TODO: print to serial monitor code that was inputted
+//menu that takes a number passed into it and presses that number
 
 void pressNumber( int var)
 {
@@ -642,6 +643,7 @@ bool winState()
     counter++;
     if (counter > 1000)
     {
+      //if it has been more than a second, then the light has not flashed and we exit
       return false;
     }
     delay(1);
@@ -650,6 +652,7 @@ bool winState()
     if (temp > 100)
     {
       //Serial.println("GREEN");
+      //if the photoresistor has registered the LED green light, then leave
 
       break;
 
@@ -661,7 +664,7 @@ bool winState()
 
   //Serial.println("CODE FOUND!!!!!!");
 
-
+  //turn on LEDS
   digitalWrite(LED1, HIGH);
   delay(500);
   digitalWrite(LED2, HIGH);
@@ -676,7 +679,7 @@ bool winState()
 
 
 
-
+//if we broke out of the loop without returning false, it has turned green, code found
   return true;
 
 
